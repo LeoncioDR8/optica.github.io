@@ -1,5 +1,6 @@
 from flask import Flask, render_template, Response, jsonify
 import cv2
+import os
 import mediapipe as mp
 import numpy as np
 
@@ -149,4 +150,5 @@ def toggle_distances():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))  
+    app.run(host='0.0.0.0', port=port)
