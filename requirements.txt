@@ -128,4 +128,4 @@ wheel==0.45.1
 wrapt==1.17.2
 zeroconf==0.145.1
 zipp==3.21.0
-gunicorn
+gunicorn==20.1.0
