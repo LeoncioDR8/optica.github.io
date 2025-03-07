@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camara</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      position: relative;
+    }
+    img {
+      border: 3px solid #00ff00;
+      border-radius: 10px;
+      width: 70vw;
+      height: 60vh;
+    }
+    .buttons {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: #00ff00;
+      color: #111;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 0 10px;
+    }
+    button:hover {
+      background: #00cc00;
+    }
+    #power {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #ff0000;
+      color: white;
+    }
+    #power:hover {
+      background: #cc0000;
+    }
+    #glasses {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: #8B4513;
+      color: white;
+    }
+    #glasses:hover {
+      background: #6B3410;
+    }
+    .box-row {
+      display: none;
+      margin-top: 20px;
+      white-space: nowrap;
+      overflow-x: auto;
+      width: 100%;
+      padding-bottom: 10px;
+      justify-content: center;
+    }
+    .box {
+      width: 80px;
+      height: 80px;
+      background-color: #00ff00;
+      margin: 0 10px;
+      display: inline-block;
+      cursor: pointer;
+      border-radius: 5px;
+      text-align: center;
+      line-height: 80px;
+      color: #111;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .box.add {
+      background-color: #00ff00;
+      font-size: 24px;
+      font-weight: bold;
+      color: #111;
+    }
+    .box.add:hover {
+      background-color: #00cc00;
+    }
+    .box.back {
+      background-color: #003366;
+      color: white;
+      line-height: 80px;
+    }
+    .box.back:hover {
+      background-color: #002244;
+    }
+    .additional-buttons {
+      display: none;
+      margin-top: 20px;
+      justify-content: center;
+    }
+    .additional-buttons button {
+      padding: 10px 20px;
+      border: none;
+      background: #00ff00;
+      color: #111;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 0 10px;
+    }
+    .additional-buttons button:hover {
+      background: #00cc00;
+    }
+    .additional-buttons button.green-button {
+      padding: 10px 20px;
+      border: none;
+      background: #00ff00;
+      color: #111;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 0 10px;
+    }
+    .additional-buttons button.green-button:hover {
+      background: #00cc00;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mira a la cámara</h1>
+  <img src="{{ url_for('video_feed') }}" alt="Video en tiempo real">
+  <div class="buttons">
+    <button onclick="togglePause()">Pausa</button>
+    <button onclick="showLenses()">Lentes</button>
+    <button onclick="showColors()">Colores</button>
+    <button class="calculate" onclick="showAdditionalButtons()">Calcular</button>
+  </div>
+
+  <div class="box-row" id="lensRow">
+    <div class="box" onclick="selectLens(1)">
+      <img src="{{ url_for('static', filename='cristales/crital_Base_color_1001.png') }}" alt="Lente 1">
+    </div>
+    <div class="box" onclick="selectLens(2)">
+      <img src="{{ url_for('static', filename='cristales/crital_Height_1001.png') }}" alt="Lente 2">
+    </div>
+    <div class="box" onclick="selectLens(3)">
+      <img src="{{ url_for('static', filename='cristales/crital_Metallic_1001.png') }}" alt="Lente 3">
+    </div>
+    <div class="box" onclick="selectLens(4)">
+      <img src="{{ url_for('static', filename='cristales/crital_Mixed_AO_1001.png') }}" alt="Lente 4">
+    </div>
+    <div class="box" onclick="selectLens(5)">
+      <img src="{{ url_for('static', filename='cristales/crital_Normal_1001.png') }}" alt="Lente 5">
+    </div>
+    <div class="box" onclick="selectLens(6)">
+      <img src="{{ url_for('static', filename='cristales/crital_Normal_DirectX_1001.png') }}" alt="Lente 6">
+    </div>
+    <div class="box" onclick="selectLens(7)">
+      <img src="{{ url_for('static', filename='cristales/crital_Opacity_1001.png') }}" alt="Lente 7">
+    </div>
+    <div class="box" onclick="selectLens(8)">
+      <img src="{{ url_for('static', filename='cristales/crital_Roughness_1001.png') }}" alt="Lente 8">
+    </div>
+    <div class="box" onclick="selectLens(9)">
+      <img src="{{ url_for('static', filename='cristales/crital_Translucency_1001.png') }}" alt="Lente 9">
+    </div>
+    <div class="box add" onclick="addLens()">+</div>
+    <div class="box back" onclick="goBack()">Regresar</div>
+  </div>
+
+  <div class="box-row" id="colorRow">
+    <div class="box" onclick="selectColor(1)">
+      <img src="{{ url_for('static', filename='texturas/MT_Montura_Base_color_1001.png') }}" alt="Color 1">
+    </div>
+    <div class="box" onclick="selectColor(2)">
+      <img src="{{ url_for('static', filename='texturas/MT_Montura_Height_1001.png') }}" alt="Color 2">
+    </div>
+    <div class="box" onclick="selectColor(3)">
+      <img src="{{ url_for('static', filename='texturas/MT_Montura_Metallic_1001.png') }}" alt="Color 3">
+    </div>
+    <div class="box" onclick="selectColor(4)">
+      <img src="{{ url_for('static', filename='texturas/MT_Montura_Mixed_AO_1001.png') }}" alt="Color 4">
+    </div>
+    <div class="box" onclick="selectColor(5)">
+      <img src="{{ url_for('static', filename='texturas/MT_Montura_Normal_1001.png') }}" alt="Color 5">
+    </div>
+    <div class="box" onclick="selectColor(6)">
+      <img src="{{ url_for('static', filename='texturas/MT_Montura_Normal_DirectX_1001.png') }}" alt="Color 6">
+    </div>
+    <div class="box" onclick="selectColor(7)">
+      <img src="{{ url_for('static', filename='texturas/MT_Montura_Roughness_1001.png') }}" alt="Color 7">
+    </div>
+    <div class="box" onclick="selectColor(8)">
+      <img src="{{ url_for('static', filename='texturas/OPtimiced_texture.png') }}" alt="Color 8">
+    </div>
+    <div class="box add" onclick="addColor()">+</div>
+    <div class="box back" onclick="goBack()">Regresar</div>
+  </div>
+
+  <div class="box-row" id="glassesRow">
+    <div class="box" onclick="selectGlasses(1)">
+      <img src="{{ url_for('static', filename='Lentes/gafas_1.png') }}" alt="Gafas 1">
+    </div>
+    <div class="box" onclick="selectGlasses(2)">
+      <img src="{{ url_for('static', filename='Lentes/gafas_2.png') }}" alt="Gafas 2">
+    </div>
+    <div class="box back" onclick="goBack()">Regresar</div>
+  </div>
+
+  <div class="additional-buttons" id="additionalButtons">
+    <button onclick="toggleDistance()">Distancia</button>
+    <button onclick="toggleMesh()">Malla</button>
+    <button class="green-button" onclick="goBack()">Regresar</button>
+  </div>
+
+  <button id="power" onclick="powerOff()">Apagar</button>
+  <button id="glasses" onclick="showGlasses()">Gafas</button>
+
+  <script>
+    async function sendRequest(action) {
+      await fetch(`/${action}`);
+    }
+
+    function togglePause() {
+      sendRequest("toggle_pause");
+    }
+
+    function powerOff() {
+      sendRequest("power_off");
+    }
+
+    function showGlasses() {
+      const buttons = document.querySelector('.buttons');
+      const lensRow = document.getElementById('lensRow');
+      const colorRow = document.getElementById('colorRow');
+      const glassesRow = document.getElementById('glassesRow');
+      const additionalButtons = document.getElementById('additionalButtons');
+
+      buttons.style.display = 'none';
+      lensRow.style.display = 'none';
+      colorRow.style.display = 'none';
+      additionalButtons.style.display = 'none';
+
+      glassesRow.style.display = 'flex';
+    }
+
+    function selectGlasses(glasses) {
+      console.log(`Seleccionaste Gafas ${glasses}`);
+    }
+
+    function showLenses() {
+      const buttons = document.querySelector('.buttons');
+      const lensRow = document.getElementById('lensRow');
+      const colorRow = document.getElementById('colorRow');
+      const glassesRow = document.getElementById('glassesRow');
+      const additionalButtons = document.getElementById('additionalButtons');
+
+      buttons.style.display = 'none';
+      colorRow.style.display = 'none';
+      glassesRow.style.display = 'none';
+      additionalButtons.style.display = 'none';
+
+      lensRow.style.display = 'flex';
+    }
+
+    function showColors() {
+      const buttons = document.querySelector('.buttons');
+      const lensRow = document.getElementById('lensRow');
+      const colorRow = document.getElementById('colorRow');
+      const glassesRow = document.getElementById('glassesRow');
+      const additionalButtons = document.getElementById('additionalButtons');
+
+      buttons.style.display = 'none';
+      lensRow.style.display = 'none';
+      glassesRow.style.display = 'none';
+      additionalButtons.style.display = 'none';
+
+      colorRow.style.display = 'flex';
+    }
+
+    function showAdditionalButtons() {
+      const buttons = document.querySelector('.buttons');
+      const lensRow = document.getElementById('lensRow');
+      const colorRow = document.getElementById('colorRow');
+      const glassesRow = document.getElementById('glassesRow');
+      const additionalButtons = document.getElementById('additionalButtons');
+
+      buttons.style.display = 'none';
+      lensRow.style.display = 'none';
+      colorRow.style.display = 'none';
+      glassesRow.style.display = 'none';
+
+      additionalButtons.style.display = 'flex';
+    }
+
+    function selectLens(lens) {
+      console.log(`Seleccionaste Lente ${lens}`);
+    }
+
+    function selectColor(color) {
+      console.log(`Seleccionaste Color ${color}`);
+    }
+
+    function addLens() {
+      console.log("Agregar nuevo lente");
+    }
+
+    function addColor() {
+      console.log("Agregar nuevo color");
+    }
+
+    async function toggleDistance() {
+      const response = await fetch('/toggle_distances');
+      const data = await response.json();
+      console.log(data.message);
+    }
+
+    async function toggleMesh() {
+      const response = await fetch('/toggle_mesh');
+      const data = await response.json();
+      console.log(data.message);
+    }
+
+    function goBack() {
+      const buttons = document.querySelector('.buttons');
+      const lensRow = document.getElementById('lensRow');
+      const colorRow = document.getElementById('colorRow');
+      const glassesRow = document.getElementById('glassesRow');
+      const additionalButtons = document.getElementById('additionalButtons');
+
+      buttons.style.display = 'block';
+      lensRow.style.display = 'none';
+      colorRow.style.display = 'none';
+      glassesRow.style.display = 'none';
+      additionalButtons.style.display = 'none';
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/static/sw.js')
+        .then((registration) => {
+          console.log('Service Worker registrado con éxito:', registration);
+        })
+        .catch((error) => {
+          console.log('Error al registrar el Service Worker:', error);
+        });
+    }
+  </script>
+</body>
+</html>
