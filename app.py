@@ -5,11 +5,9 @@ import numpy as np
 
 app = Flask(__name__)
 
-# Configuración de MediaPipe Face Mesh
 face_mesh = mp.solutions.face_mesh.FaceMesh(max_num_faces=1)
 drawing = mp.solutions.drawing_utils
 
-# Estilos para dibujar los landmarks
 drawing_style = drawing.DrawingSpec(color=(0, 255, 0), thickness=1, circle_radius=1)
 left_eye_style = drawing.DrawingSpec(color=(255, 0, 0), thickness=2, circle_radius=2)
 right_eye_style = drawing.DrawingSpec(color=(0, 0, 255), thickness=2, circle_radius=2)
@@ -17,21 +15,16 @@ lips_style = drawing.DrawingSpec(color=(255, 255, 255), thickness=2, circle_radi
 nose_style = drawing.DrawingSpec(color=(255, 255, 255), thickness=2, circle_radius=2)
 eyebrows_style = drawing.DrawingSpec(color=(255, 255, 255), thickness=2, circle_radius=2)
 
-# Variables de estado
 camera_active = True
 black_screen = False
 show_mesh = True
 show_distances = False
 
-# Cargar clasificadores para detección de ojos y rostros
 eye_detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_eye.xml")
 face_detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 
 def detect_pupils(frame):
-    """
-    Detecta las pupilas y calcula distancias entre ellas y la nariz.
-    """
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(100, 100))
     eyes = eye_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=10, minSize=(30, 30))
@@ -75,9 +68,7 @@ def detect_pupils(frame):
 
 
 def generate_frames():
-    """
-    Genera los frames de video para la transmisión en tiempo real.
-    """
+
     cap = cv2.VideoCapture(0)
     while True:
         if not camera_active:
@@ -115,25 +106,18 @@ def generate_frames():
 
 @app.route('/')
 def index():
-    """
-    Ruta principal que renderiza la página HTML.
-    """
+    
     return render_template('index.html')
 
 
 @app.route('/video_feed')
 def video_feed():
-    """
-    Ruta para la transmisión de video en tiempo real.
-    """
+
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/toggle_camera')
 def toggle_camera():
-    """
-    Alterna el estado de la cámara (activada/desactivada).
-    """
     global camera_active
     camera_active = not camera_active
     state = "on" if camera_active else "off"
@@ -142,9 +126,6 @@ def toggle_camera():
 
 @app.route('/toggle_screen')
 def toggle_screen():
-    """
-    Alterna entre pantalla negra y pantalla normal.
-    """
     global black_screen
     black_screen = not black_screen
     state = "black" if black_screen else "normal"
@@ -153,9 +134,6 @@ def toggle_screen():
 
 @app.route('/toggle_mesh')
 def toggle_mesh():
-    """
-    Alterna la visualización de la malla facial.
-    """
     global show_mesh
     show_mesh = not show_mesh
     state = "visible" if show_mesh else "hidden"
@@ -164,9 +142,6 @@ def toggle_mesh():
 
 @app.route('/toggle_distances')
 def toggle_distances():
-    """
-    Alterna la visualización de las distancias entre pupilas y nariz.
-    """
     global show_distances
     show_distances = not show_distances
     state = "enabled" if show_distances else "disabled"
@@ -174,7 +149,4 @@ def toggle_distances():
 
 
 if __name__ == '__main__':
-    """
-    Inicia la aplicación Flask.
-    """
     app.run(host='0.0.0.0', port=5000, debug=True)
