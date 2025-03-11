@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Camara</title>
+  <title>Cámara</title>
   <style>
     body {
       display: flex;
@@ -230,11 +230,13 @@
 
   <script>
     async function sendRequest(action) {
-      await fetch(`/${action}`);
+      const response = await fetch(`/${action}`);
+      const data = await response.json();
+      console.log(data.message);
     }
 
     function togglePause() {
-      sendRequest("toggle_pause");
+      sendRequest("toggle_camera");
     }
 
     function powerOff() {
@@ -322,15 +324,11 @@
     }
 
     async function toggleDistance() {
-      const response = await fetch('/toggle_distances');
-      const data = await response.json();
-      console.log(data.message);
+      await sendRequest("toggle_distances");
     }
 
     async function toggleMesh() {
-      const response = await fetch('/toggle_mesh');
-      const data = await response.json();
-      console.log(data.message);
+      await sendRequest("toggle_mesh");
     }
 
     function goBack() {
