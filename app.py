@@ -6,6 +6,7 @@ import numpy as np
 
 app = Flask(__name__)
 
+
 face_mesh = mp.solutions.face_mesh.FaceMesh(max_num_faces=1)
 drawing = mp.solutions.drawing_utils
 
@@ -23,7 +24,6 @@ show_distances = False
 
 eye_detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_eye.xml")
 face_detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-
 
 def detect_pupils(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -67,9 +67,7 @@ def detect_pupils(frame):
 
     return frame
 
-
 def generate_frames():
-
     cap = cv2.VideoCapture(0)
     while True:
         if not camera_active:
@@ -104,18 +102,13 @@ def generate_frames():
 
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-
 @app.route('/')
 def index():
-    
     return render_template('index.html')
-
 
 @app.route('/video_feed')
 def video_feed():
-
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
 
 @app.route('/toggle_camera')
 def toggle_camera():
@@ -124,14 +117,12 @@ def toggle_camera():
     state = "on" if camera_active else "off"
     return jsonify(message=f"Camera {state}")
 
-
 @app.route('/toggle_screen')
 def toggle_screen():
     global black_screen
     black_screen = not black_screen
     state = "black" if black_screen else "normal"
     return jsonify(message=f"Screen {state}")
-
 
 @app.route('/toggle_mesh')
 def toggle_mesh():
@@ -140,7 +131,6 @@ def toggle_mesh():
     state = "visible" if show_mesh else "hidden"
     return jsonify(message=f"Mesh {state}")
 
-
 @app.route('/toggle_distances')
 def toggle_distances():
     global show_distances
@@ -148,7 +138,6 @@ def toggle_distances():
     state = "enabled" if show_distances else "disabled"
     return jsonify(message=f"Distances {state}")
 
-
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  
-    app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, ssl_context=('/etc/letsencrypt/live/tu-dominio.com/fullchain.pem', '/etc/letsencrypt/live/tu-dominio.com/privkey.pem'))
