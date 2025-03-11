@@ -1,10 +1,12 @@
-from flask import Flask, render_template, Response, jsonify
+from flask import Flask, render_template, Response, jsonify, request
 import cv2
 import os
 import mediapipe as mp
 import numpy as np
+from flask_cors import CORS 
 
 app = Flask(__name__)
+CORS(app) 
 
 
 face_mesh = mp.solutions.face_mesh.FaceMesh(max_num_faces=1)
@@ -138,6 +140,17 @@ def toggle_distances():
     state = "enabled" if show_distances else "disabled"
     return jsonify(message=f"Distances {state}")
 
+@app.route('/upload', methods=['POST'])
+def upload_image():
+    data = request.json
+    if not data or 'image' not in data:
+        return jsonify({"message": "No se recibió la imagen", "status": "error"}), 400
+
+    image_base64 = data['image']  
+    print("Imagen recibida")
+
+    return jsonify({"message": "Imagen recibida", "status": "success"}), 200
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, ssl_context=('/etc/letsencrypt/live/tu-dominio.com/fullchain.pem', '/etc/letsencrypt/live/tu-dominio.com/privkey.pem'))
+    app.run(host='0.0.0.0', port=port)
